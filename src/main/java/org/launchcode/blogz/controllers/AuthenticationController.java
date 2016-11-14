@@ -22,6 +22,46 @@ public class AuthenticationController extends AbstractController {
 		
 		// TODO - implement signup
 		
+		// needs to make sure username and password are acceptable
+		// needs to ensure password and verify are the same
+		
+		String username = request.getParameter("username");
+		String password = request.getParameter("password");
+		String verify = request.getParameter("verify");
+		
+		// Initial parameters
+		boolean validUsername = User.isValidUsername(username);
+		boolean validPassword = User.isValidPassword(password);
+		boolean validMatch = password.equals(verify);
+		
+		if (validUsername == false) {
+			model.addAttribute("username_error","This username is not allowed");
+			return "signup"; // sends the user back to sign up page
+		}
+		
+		if (validPassword == false) {
+			model.addAttribute("password_error", "This password is not allowed");
+			return "signup";
+		}
+		
+		if (validMatch == false) {
+			model.addAttribute("verify_error", "You did not re-type the passwords correctly");
+			return "signup";
+		}
+		
+		// Session thisSession = request.getSession();
+		// This command doesn't work.
+		
+		// Assuming the user managed to go through all these without being "false"
+		// Then, we need to add the information of the user's username and password into the session
+		
+		User user = new User(username, password);
+		userDao.save(user); // allowed under CrudRepository
+		
+		// saving the new session
+		HttpSession newSession = request.getSession(); // true parameter is not necessary
+		setUserInSession(newSession, user);
+		
 		return "redirect:blog/newpost";
 	}
 	
