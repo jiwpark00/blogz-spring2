@@ -3,6 +3,7 @@ package org.launchcode.blogz.controllers;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.launchcode.blogz.models.Post;
 import org.launchcode.blogz.models.User;
@@ -24,9 +25,32 @@ public class PostController extends AbstractController {
 	public String newPost(HttpServletRequest request, Model model) {
 		
 		// TODO - implement newPost
+		String title = request.getParameter("title");
+		String body = request.getParameter("body");
+		// To get the author, we need to get from the currently logged in session
+		HttpSession newSession = request.getSession(); // true parameter is not necessary
+		User author = getUserFromSession(newSession);
+		// getUserFromSession is from AbstractController
 		
-		return "redirect:index"; // TODO - this redirect should go to the new post's page  		
-	}
+		if (title == null || title.isEmpty()) {
+			model.addAttribute("error", "We need a title for the post");
+			return "newpost";
+		}
+		
+		if (body == null || body.isEmpty()) {
+			model.addAttribute("title",title);
+			model.addAttribute("error", "We need a body for the post");
+			return "newpost";
+		}
+		
+		// Assuming we have title and body
+		// We want to save the post
+		Post post = new Post(title, body, author);
+		postDao.save(post); // again, thanks to CrudRepository
+		
+		// TODO - this redirect should go to the new post's page  		
+		return "redirect:/blog/" + author.getUsername() + "/" + post.getUid(); 
+		}
 	
 	@RequestMapping(value = "/blog/{username}/{uid}", method = RequestMethod.GET)
 	public String singlePost(@PathVariable String username, @PathVariable int uid, Model model) {
