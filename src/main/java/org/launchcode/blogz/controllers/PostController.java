@@ -56,6 +56,10 @@ public class PostController extends AbstractController {
 	public String singlePost(@PathVariable String username, @PathVariable int uid, Model model) {
 		
 		// TODO - implement singlePost
+		Post post = postDao.findByUid(uid);
+		
+		model.addAttribute("error",""); // this was a crucial part to get this to work
+		model.addAttribute("post", post);
 		
 		return "post";
 	}
