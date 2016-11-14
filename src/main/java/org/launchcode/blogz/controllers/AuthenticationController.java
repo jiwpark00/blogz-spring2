@@ -75,7 +75,32 @@ public class AuthenticationController extends AbstractController {
 		
 		// TODO - implement login
 		
-		return "redirect:blog/newpost";
+		String username = request.getParameter("username");
+		String password = request.getParameter("password");
+		
+		User user = userDao.findByUsername(username);
+		
+		// Initial parameters
+		boolean matchedPassword = user.isMatchingPassword(password);
+		
+		if (username == null) {
+			model.addAttribute("error", "Your username is empty");
+			return "login";
+		}
+		
+		if (matchedPassword == false) // If FALSE: rejects back to the login
+		{
+			model.addAttribute("username", username);
+			model.addAttribute("error", "Password did not match");
+			return "login";
+		}
+		else // If TRUE: gives the session and sends to the newpost
+		{
+			setUserInSession(request.getSession(), user);
+			model.addAttribute("username", username);
+			return "redirect:blog/newpost";
+		}
+		
 	}
 	
 	@RequestMapping(value = "/logout", method = RequestMethod.GET)
