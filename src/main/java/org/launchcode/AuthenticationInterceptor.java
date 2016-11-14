@@ -23,7 +23,7 @@ public class AuthenticationInterceptor extends HandlerInterceptorAdapter {
 
         List<String> authPages = Arrays.asList("/blog/newpost");
 
-        // Require sign-in for auth pages
+        // Require sign-in for auth pages testing
         if ( authPages.contains(request.getRequestURI()) ) {
 
         	boolean isLoggedIn = false;
