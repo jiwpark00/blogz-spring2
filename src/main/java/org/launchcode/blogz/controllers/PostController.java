@@ -69,6 +69,11 @@ public class PostController extends AbstractController {
 		
 		// TODO - implement userPosts
 		
+		User user = userDao.findByUsername(username);
+		List<Post> posts = user.getPosts();
+		
+		model.addAttribute("posts",posts); // returns all the posts
+		
 		return "blog";
 	}
 	
